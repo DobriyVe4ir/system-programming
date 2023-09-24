@@ -4,3 +4,6 @@
 #include <Windows.h>
 #include <limits>
 #include <float.h>
+#include <string.h>
+#include <strsafe.h>
+#include <string>
