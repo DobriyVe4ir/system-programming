@@ -1,7 +1,9 @@
-﻿#include "pch.h"
+#include "pch.h"
+#define BUFFER_SIZE 200
 
 void ErrorExit(LPTSTR lpszFunction)
 {
+
     // Retrieve the system error message for the last-error code
     LPVOID lpMsgBuf;
     LPVOID lpDisplayBuf;
@@ -32,6 +34,134 @@ void ErrorExit(LPTSTR lpszFunction)
     ExitProcess(dw);
 }
 
+void asciiToUnicode() {
+    HANDLE firstFile = CreateFile(L"inFileAnci.txt",
+        FILE_ALL_ACCESS,
+        FILE_SHARE_READ,
+        NULL,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL,
+        NULL);
+
+    HANDLE secondFile = CreateFile(L"outFileUni.txt",
+        FILE_ALL_ACCESS,
+        FILE_SHARE_READ,
+        NULL,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL,
+        NULL);
+
+    LPSTR lpBuffer = new CHAR[BUFFER_SIZE];
+    LPWSTR lpwBuffer = new WCHAR[BUFFER_SIZE];
+
+    DWORD dwBytesRead = 0;
+
+    ReadFile(firstFile,
+        lpBuffer,
+        BUFFER_SIZE - 1,
+        &dwBytesRead,
+        NULL
+    );
+
+    MultiByteToWideChar(CP_ACP,
+           0,
+        lpBuffer,
+        dwBytesRead,
+        lpwBuffer,
+        dwBytesRead
+    );
+
+    WriteFile(secondFile,
+        lpwBuffer,
+        dwBytesRead*2,
+        &dwBytesRead,
+        NULL);
+
+    TCHAR functionName[] = TEXT("asciiToUnicode");
+    if(GetLastError() != 0) ErrorExit(functionName);
+}
+
+void unicodeToAscii() {
+    HANDLE firstFile = CreateFile(L"inFileUni.txt",
+        FILE_ALL_ACCESS,
+        FILE_SHARE_READ,
+        NULL,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL,
+        NULL);
+
+    HANDLE secondFile = CreateFile(L"outFileAnci.txt",
+        FILE_ALL_ACCESS,
+        FILE_SHARE_READ,
+        NULL,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL,
+        NULL);
+
+    LPSTR lpBuffer = new CHAR[BUFFER_SIZE];
+    LPWSTR lpwBuffer = new WCHAR[BUFFER_SIZE];
+    TCHAR functionName[] = TEXT("unicodeToAscii");
+    DWORD dwBytesRead = 0;
+
+    ReadFile(firstFile,
+        lpwBuffer,
+        BUFFER_SIZE - 1,
+        &dwBytesRead,
+        NULL
+    );
+
+    INT size = WideCharToMultiByte(CP_ACP,
+        0,
+        lpwBuffer,
+        dwBytesRead / sizeof(WCHAR),
+        NULL,
+        0,
+        NULL,
+        NULL
+    );
+
+    WideCharToMultiByte(CP_ACP,
+        0,
+        lpwBuffer,
+        dwBytesRead/sizeof(WCHAR),
+        lpBuffer,
+        size,
+        NULL,
+        NULL
+    );
+
+    WriteFile(secondFile,
+        lpBuffer,
+        size,
+        &dwBytesRead,
+        NULL);
+
+    if (GetLastError() != 0) ErrorExit(functionName);
+}
+
+void systemInfo() {
+    SYSTEM_INFO siSysInfo;
+
+    // Copy the hardware information to the SYSTEM_INFO structure. 
+
+    GetSystemInfo(&siSysInfo);
+
+    // Display the contents of the SYSTEM_INFO structure. 
+
+    printf("Hardware information: \n");
+    printf("  OEM ID: %u\n", siSysInfo.dwOemId);
+    printf("  Number of processors: %u\n",
+        siSysInfo.dwNumberOfProcessors);
+    printf("  Page size: %u\n", siSysInfo.dwPageSize);
+    printf("  Processor type: %u\n", siSysInfo.dwProcessorType);
+    printf("  Minimum application address: %lx\n",
+        siSysInfo.lpMinimumApplicationAddress);
+    printf("  Maximum application address: %lx\n",
+        siSysInfo.lpMaximumApplicationAddress);
+    printf("  Active processor mask: %u\n",
+        siSysInfo.dwActiveProcessorMask);
+}
+
 int main(int argc, char* argv[])
 {
     
@@ -39,40 +169,17 @@ int main(int argc, char* argv[])
     {
         LocalAlloc(LHND, 90000000000);
         // Вызываем функцию ErrorExit для вывода описания ошибки 8
-        TCHAR functionName[] = TEXT("YourFunctionNameHere");
+        TCHAR functionName[] = TEXT("createError");
         ErrorExit(functionName); // Замените "YourFunctionNameHere" на имя вашей функции
     }
     else if (argc == 2 && _stricmp(argv[1], "-s") == 0) {
-        SYSTEM_INFO siSysInfo;
-
-        // Copy the hardware information to the SYSTEM_INFO structure. 
-
-        GetSystemInfo(&siSysInfo);
-
-        // Display the contents of the SYSTEM_INFO structure. 
-
-        printf("Hardware information: \n");
-        printf("  OEM ID: %u\n", siSysInfo.dwOemId);
-        printf("  Number of processors: %u\n",
-            siSysInfo.dwNumberOfProcessors);
-        printf("  Page size: %u\n", siSysInfo.dwPageSize);
-        printf("  Processor type: %u\n", siSysInfo.dwProcessorType);
-        printf("  Minimum application address: %lx\n",
-            siSysInfo.lpMinimumApplicationAddress);
-        printf("  Maximum application address: %lx\n",
-            siSysInfo.lpMaximumApplicationAddress);
-        printf("  Active processor mask: %u\n",
-            siSysInfo.dwActiveProcessorMask);
+        systemInfo();
     }
     else if (argc == 2 && _stricmp(argv[1], "-a") == 0) {
-        std::string path;
-        std::cout << "Path to file: ";
-        std::getline(std::cin, path);
+        asciiToUnicode();
     }
     else if (argc == 2 && _stricmp(argv[1], "-u") == 0) {
-        std::string path;
-        std::cout << "Path to file: ";
-        std::getline(std::cin, path);
+        unicodeToAscii();
     }
     return 0;
 }
