@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #define BUFFER_SIZE 200
 
 void ErrorExit(LPTSTR lpszFunction)
