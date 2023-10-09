@@ -135,6 +135,12 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="inFileAnci.txt" />
+    <Text Include="inFileUni.txt" />
+    <Text Include="outFileAnci.txt" />
+    <Text Include="outFileUni.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

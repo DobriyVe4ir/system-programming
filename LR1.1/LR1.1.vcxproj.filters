@@ -27,4 +27,10 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="inFileAnci.txt" />
+    <Text Include="outFileUni.txt" />
+    <Text Include="inFileUni.txt" />
+    <Text Include="outFileAnci.txt" />
+  </ItemGroup>
 </Project>
