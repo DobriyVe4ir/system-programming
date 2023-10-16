@@ -1,4 +1,4 @@
-﻿#define _WIN32_WINNT 0x0501
+﻿
 #include "pch.h"
 
 LPWSTR strToWStr(PCHAR str) {
@@ -124,6 +124,9 @@ void deleteFile(PCHAR strSrc) {
 void createFile(PCHAR strSrc) {
     CreateFile(strToWStr(strSrc), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 }
+
+
+
 
 
 int main(int argc, char* argv[])
