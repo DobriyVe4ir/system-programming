@@ -9,10 +9,10 @@ LPWSTR strToWStr(PCHAR str) {
 }
 
 HANDLE strToHandle(PCHAR str) {
-    int length = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
-    LPWSTR wStrSrc = new WCHAR[length];
-    MultiByteToWideChar(CP_ACP, 0, str, -1, wStrSrc, length);
-    return FindFirstFile(wStrSrc, NULL);
+
+    //HANDLE hFind = FindFirstFileA(str, NULL);
+    HANDLE hFind = FindFirstFileA("C:\\*", NULL);
+    return hFind;
 }
 
 void printCatalog(PCHAR path) {
