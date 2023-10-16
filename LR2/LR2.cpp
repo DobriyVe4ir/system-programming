@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
             std::cin.getline(filename, 40);
 
             fileInfo(curDir, filename);
-
+             
             delete[] filename;
         }
         else if (STR_EQUALS("-cp")) {
