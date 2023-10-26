@@ -1,5 +1,4 @@
-﻿
-#include "pch.h"
+﻿#include "pch.h"
 
 LPWSTR strToWStr(PCHAR str) {
     int length = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
@@ -9,15 +8,12 @@ LPWSTR strToWStr(PCHAR str) {
 }
 
 HANDLE strToHandle(PCHAR str) {
-
-    //HANDLE hFind = FindFirstFileA(str, NULL);
-    HANDLE hFind = FindFirstFileA("C:\\*", NULL);
+    HANDLE hFind = FindFirstFileA(str, NULL);
     return hFind;
 }
 
 void printCatalog(PCHAR path) {
     WIN32_FIND_DATA FindFileData;
-    
     LPSTR DirSpec = new CHAR[MAX_PATH + 1];  // directory specification
     DWORD dwError;
 
@@ -34,25 +30,21 @@ void printCatalog(PCHAR path) {
     else
     {
         _BY_HANDLE_FILE_INFORMATION lpFileInfo;
-        
 
         while (FindNextFile(hFind, &FindFileData) != 0)
         {
 
-
             if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
                 printf("<dir>  %ls\n", FindFileData.cFileName);
             }
-            else
-            {
+            else {
                 printf("<file> %ls\n", FindFileData.cFileName);
             }
         }
 
         dwError = GetLastError();
         FindClose(hFind);
-        if (dwError != ERROR_NO_MORE_FILES)
-        {
+        if (dwError != ERROR_NO_MORE_FILES) {
             printf("FindNextFile error. Error is %u\n", dwError);
             return;
         }
@@ -77,7 +69,6 @@ void fileInfo(PCHAR path, PCHAR file) {
     PCHAR filePath = new CHAR(strlen(path) + strlen(file) + 2);
     HANDLE hFind = INVALID_HANDLE_VALUE;
     WIN32_FIND_DATA FindFileData;
-
     FILETIME FcreationTime;
     FILETIME FeditTime;
     SYSTEMTIME creationTime;
@@ -101,7 +92,6 @@ void fileInfo(PCHAR path, PCHAR file) {
         return;
     }
 
-
     FileTimeToSystemTime(&FindFileData.ftCreationTime, &creationTime);
     FileTimeToSystemTime(&FindFileData.ftCreationTime, &editTime);
 
@@ -109,11 +99,9 @@ void fileInfo(PCHAR path, PCHAR file) {
     printf("\tCreation time: \n\t\t%04d-%02d-%02d %02d:%02d\n", creationTime.wYear, creationTime.wMonth, creationTime.wDay, creationTime.wHour, creationTime.wMinute);
     printf("\tEdit name: \n\t\t%04d-%02d-%02d %02d:%02d\n", editTime.wYear, editTime.wMonth, editTime.wDay, editTime.wHour, editTime.wMinute);
     printf("\tSize: \t%u\n", GetFileSize(hFind, NULL));
-
 }
 
 void copyFile(PCHAR strSrc, PCHAR strDest) {
-
     CopyFile(strToWStr(strSrc), strToWStr(strDest), NULL);
 };
 
@@ -124,10 +112,6 @@ void deleteFile(PCHAR strSrc) {
 void createFile(PCHAR strSrc) {
     CreateFile(strToWStr(strSrc), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 }
-
-
-
-
 
 int main(int argc, char* argv[])
 {
@@ -143,14 +127,6 @@ int main(int argc, char* argv[])
         PCHAR argm = new CHAR[20];
         std::cin >> argm;
         #define STR_EQUALS(str1) (strcmp(str1, argm) == 0)
-        
-        //Сменить директорию+
-        //Распечатать директорию+
-        //Вывести подробную информацию о файле+
-        //Скопировать файл+
-        //Создать директорию
-        //Удалить файл(пустую директорию)+
-        
 
         if (STR_EQUALS("-cd")) {
             std::cin.ignore();
@@ -167,9 +143,7 @@ int main(int argc, char* argv[])
 
             std::cin.ignore();
             std::cin.getline(filename, 40);
-
             fileInfo(curDir, filename);
-             
             delete[] filename;
         }
         else if (STR_EQUALS("-cp")) {
@@ -179,7 +153,6 @@ int main(int argc, char* argv[])
             std::cout << "Source: \n";
             std::cin.ignore();
             std::cin.getline(src, MAX_PATH);
-
             std::cout << "Destination: \n";
             std::cin.getline(dest, MAX_PATH);
             
@@ -193,7 +166,6 @@ int main(int argc, char* argv[])
             std::cin.ignore();
             std::cin.getline(dest, MAX_PATH);
             deleteFile(dest);
-
             delete[] dest;
         }
         else if (STR_EQUALS("-create")) {
@@ -201,11 +173,9 @@ int main(int argc, char* argv[])
             std::cin.ignore();
             std::cin.getline(dest, MAX_PATH);
             createFile(dest);
-
             delete[] dest;
         }
     }
-
     delete[] curDir;
     return (0);
 }
