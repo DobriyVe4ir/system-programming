@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #define MIN_ARRAY_SIZE 2
-#define MAX_ARRAY_SIZE 4
+#define MAX_ARRAY_SIZE 10
 #define MIN_ARRAY_VALUE 10
 #define MAX_ARRAY_VALUE 100
 
@@ -9,7 +9,6 @@ struct ThreadData {
     int* result;
     int id;
     std::vector<int> data;
-    CRITICAL_SECTION* resultLock;
 };
 
 //доп. метод подсчета НОД
@@ -40,9 +39,7 @@ DWORD WINAPI FindGCD(LPVOID lpParam)  {
         gcd = GCD(gcd, data[i]);
     }
 
-    EnterCriticalSection(threadData->resultLock); // Захватываем мьютекс
     *(threadData->result) = gcd;
-    LeaveCriticalSection(threadData->resultLock); // Освобождаем мьютекс
     return 0;
 }
 
@@ -65,20 +62,21 @@ int main(int argc, char* argv[])
     {
         //создание случайного массива
         int size = MIN_ARRAY_SIZE + std::rand() % (MAX_ARRAY_SIZE - MIN_ARRAY_SIZE + 1);
+        printf_s("%d: \tArray size: %d \t{", i, size);
         std::vector<int> numbers;
         for (size_t t = 0; t < size; t++)
         {
             numbers.push_back(MIN_ARRAY_VALUE + std::rand() % (MAX_ARRAY_VALUE - MIN_ARRAY_VALUE + 1));
+            printf_s("%d ", numbers.back());
         }
-
+        printf_s("}\r\n");
         //создание потока с аргументом в виде структуры.
-        ThreadData threadData;
-        threadData.id = i;
-        threadData.result = &results[i];
-        threadData.resultLock = &resultLock; // Передаем мьютекс
-        threadData.data = numbers;
+        ThreadData* threadData = new ThreadData();
+        threadData->id = i;
+        threadData->result = &results[i];
+        threadData->data = numbers;
 
-        threads[i] = CreateThread(NULL, 0, FindGCD, &threadData, 0, NULL);
+        threads[i] = CreateThread(NULL, 0, FindGCD, threadData, 0, NULL);
     }
 
     //синхронизация
@@ -88,16 +86,15 @@ int main(int argc, char* argv[])
     for (size_t i = 0; i < numberOfThreads; i++) {
         CloseHandle(threads[i]);
     }
-    DeleteCriticalSection(&resultLock); // Удаляем мьютекс
     delete[] threads;
 
     int sum = 0;
     //подсчет
     for (size_t i = 0; i < numberOfThreads; i++) {
         sum += *(results+i);
+        printf_s("%d: %d\n\r", i, *(results + i));
     }
 
-    char buffer[100];
 
     printf_s("Sum of numbers %d", sum);
 
