@@ -65,17 +65,17 @@ void asciiToUnicode() {
             NULL
         );
 
-        MultiByteToWideChar(CP_ACP,
+         dwBytesRead = MultiByteToWideChar(CP_ACP,
             0,
             lpBuffer,
             dwBytesRead,
             lpwBuffer,
-            dwBytesRead
+            BUFFER_SIZE
         );
 
         WriteFile(secondFile,
             lpwBuffer,
-            dwBytesRead * sizeof(WCHAR),
+            dwBytesRead,
             NULL,
             NULL);
 
@@ -129,7 +129,7 @@ void unicodeToAscii() {
 
         WriteFile(secondFile,
             lpBuffer,
-            BUFFER_SIZE,
+            dwBytesRead,
             NULL,
             NULL);
     } while (dwBytesRead != 0);
