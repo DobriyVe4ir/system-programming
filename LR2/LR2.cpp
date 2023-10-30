@@ -8,7 +8,8 @@ LPWSTR strToWStr(PCHAR str) {
 }
 
 HANDLE strToHandle(PCHAR str) {
-    HANDLE hFind = FindFirstFileA(str, NULL);
+    WIN32_FIND_DATA FindFileData;
+    HANDLE hFind = FindFirstFile(_T("C:\\*"), &FindFileData);
     return hFind;
 }
 
@@ -118,7 +119,7 @@ int main(int argc, char* argv[])
     info();
 
     PCHAR curDir = new CHAR[MAX_PATH + 1];
-    strncpy(curDir, "D:\\\0", 4);
+    strncpy(curDir, "D:\\*", 4);
 
     while(true) {
 

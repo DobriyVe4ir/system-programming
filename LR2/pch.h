@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <vector>
 #include <limits>
+#include <tchar.h>
 // Добавьте сюда заголовочные файлы для предварительной компиляции
 
 #endif //PCH_H
