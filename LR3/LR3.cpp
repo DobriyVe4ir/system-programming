@@ -10,9 +10,15 @@ int main()
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 
+	HANDLE pipeR, pipeW;
+
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi));
+	si.dwFlags |= STARTF_USESTDHANDLES;
+	si.hStdOutput = pipeW;
+	si.hStdError = pipeW;
+
 
 	PCHAR argm = new CHAR[20];
 	while (true)
@@ -30,6 +36,8 @@ int main()
 			lstrcpy(fullCommand, command);
 			wcscat_s(fullCommand, lstrlen(command) + lstrlen(wstr) + 1, wstr);
 			
+
+
 			//7za.exe a + wstr
 			if (!CreateProcess(NULL,   // No module name (use command line)
 				fullCommand,      // Command line
